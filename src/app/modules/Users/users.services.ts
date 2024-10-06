@@ -17,8 +17,12 @@ const getUserFromDb = async (id: string) => {
   return user
 }
 
-const updateUserIntoDb = async (email: string, payload: Partial<IUser>) => {
-  const user = await User.isUserExistsByEmail(email)
+const updateUserIntoDb = async (id: string, payload: Partial<IUser>) => {
+  const user = await User.findOne({
+    _id: id,
+    isDeleted: false,
+    isBlocked: false,
+  })
   // if user not found
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found')
@@ -37,7 +41,7 @@ const updateUserIntoDb = async (email: string, payload: Partial<IUser>) => {
     throw new AppError(httpStatus.BAD_REQUEST, 'This userName is already taken')
   }
 
-  const updatedUser = await User.findOneAndUpdate({ email: email }, payload, {
+  const updatedUser = await User.findByIdAndUpdate(id, payload, {
     new: true,
   })
 
