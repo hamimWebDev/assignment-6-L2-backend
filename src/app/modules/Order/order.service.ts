@@ -7,7 +7,6 @@ import httpStatus from 'http-status'
 import moment from 'moment'
 import { initiatePayment } from '../payment/payment.utils'
 
-
 const createOrder = async (user: JwtPayload, payload: Partial<IOrder>) => {
 
    // Find user
@@ -54,6 +53,8 @@ const createOrder = async (user: JwtPayload, payload: Partial<IOrder>) => {
     customerEmail: isUser.email,
     customerPhone: isUser.phone,
     customerAddress: "Bogura, Bangladesh",
+    startDate : payload.startDate || new Date(),
+    endDate : payload.endDate || moment().add(payload?.subscriptionDuration, 'months').toDate(),
   };
 
   

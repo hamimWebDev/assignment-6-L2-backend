@@ -16,13 +16,28 @@ app.use(cockieParser())
 app.use(cors())
 
 
+// Serve static files from the 'build' directory
+app.use(express.static(path.join(__dirname, "..", "build")));
+
+
+
+// app.set("views", path.join(__dirname, "..", "./views")); // Ensure this points to your views folder
+app.set("view engine", "ejs"); // Set EJS as the view engine
+
+
+// Serve static files from the "public" directory
+// app.use(express.static(path.join(__dirname, 'public')));
+ 
+
+
+
 // application routes
 app.use("/api", router);
 
 
 // Test route
 app.get('/', async (req: Request, res: Response) => {
-  const message = 'Assignment-6 server is running'
+  const message = 'Recipe Circle server is running'
   res.send(message)
 })
 
@@ -36,7 +51,7 @@ app.get('*', (req: Request, res: Response) => {
 app.use(globalErrorHandler);
 
 // not found route
-// app.use(notFound);
+app.use(notFound);
 
 
 export default app;
