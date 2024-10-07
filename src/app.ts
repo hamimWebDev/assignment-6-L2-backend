@@ -12,8 +12,8 @@ const app: Application = express()
 app.use(express.json())
 app.use(cockieParser())
 
-// cors configaration
-app.use(cors())
+// cors configuration
+app.use(cors({origin: 'http://localhost:3000', credentials : true }))
 
 
 // Serve static files from the 'build' directory

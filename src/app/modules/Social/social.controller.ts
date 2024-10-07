@@ -5,7 +5,7 @@ import { SocialServices } from './social.service'
 
 // Add rating to a recipe
 const addRating = catchAsync(async (req, res) => {
-  const { id } = req.user
+  const { id } = req.user as any
   const { rating } = req.body
   const { recipeId } = req.params
 
@@ -21,7 +21,7 @@ const addRating = catchAsync(async (req, res) => {
 
 // Add comment to a recipe
 const addComment = catchAsync(async (req, res) => {
-  const { id } = req.user // Get the user ID from the authenticated request
+  const { id } = req.user as any // Get the user ID from the authenticated request
   const { content } = req.body // Get the comment text from the request body
   const { recipeId } = req.params // Get the recipe ID from the URL params
 
@@ -37,7 +37,7 @@ const addComment = catchAsync(async (req, res) => {
 
 // Update comment on a recipe
 const updateComment = catchAsync(async (req, res) => {
-  const { id } = req.user // User ID from authenticated request
+  const { id } = req.user as any // User ID from authenticated request
   const { content } = req.body // New content for the comment
   const { recipeId, commentId } = req.params // Recipe ID and Comment ID (_id) from URL params
 
@@ -58,7 +58,7 @@ const updateComment = catchAsync(async (req, res) => {
 
 // Delete comment on a recipe
 const deleteComment = catchAsync(async (req, res) => {
-  const { id } = req.user // User ID from authenticated request
+  const { id } = req.user as any // User ID from authenticated request
   const { recipeId, commentId } = req.params // Recipe ID and Comment ID (_id) from URL params
 
   const result = await SocialServices.deleteComment(id, recipeId, commentId) // Call service to delete comment
@@ -75,7 +75,7 @@ const deleteComment = catchAsync(async (req, res) => {
 const vote = catchAsync(async (req, res) => {
   const { vote } = req.body // 1 for upvote, -1 for downvote
   const { recipeId } = req.params
-  const { id: userId } = req.user // User ID from authentication
+  const { id: userId } = req.user as any // User ID from authentication
 
   const updatedRecipe = await SocialServices.voteRecipe(userId, recipeId, vote)
 

@@ -29,7 +29,7 @@ export const addRating = async (
       user: userId,
       recipe: recipeId,
       rating: ratingValue,
-    });
+    }) as any;
     await newRating.save();
 
     // Push the rating reference to the recipe's `ratings` array
@@ -61,7 +61,7 @@ export const addComment = async (
     recipe: recipeId,
     user: userId,
     content: content,
-  });
+  }) as any;
 
   // Add the new comment's ID to the recipe's comments array
   recipe?.comments?.push(newComment._id);
@@ -172,6 +172,7 @@ export const deleteComment = async (
     }
   } else {
     // If the user hasn't voted yet
+    //@ts-ignore
     recipe?.votes?.push({ user: userId, vote: voteValue });
   }
 
