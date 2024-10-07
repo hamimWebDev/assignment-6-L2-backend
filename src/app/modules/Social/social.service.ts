@@ -8,7 +8,7 @@ export const addRating = async (
   rating: number,
 ) => {
   // Find the recipe by ID
-  const recipe = (await Recipe.findById(recipeId)) as any
+  const recipe = await Recipe.findById(recipeId) as any;
   if (!recipe) {
     throw new AppError(httpStatus.NOT_FOUND, 'Recipe not found')
   }
@@ -16,14 +16,17 @@ export const addRating = async (
   // Check if the user has already rated the recipe
   const existingRating = recipe.ratings.find(
     (r: any) => r.user.toString() === userId,
+
   )
 
   if (existingRating) {
     // If the user has already rated the recipe, update the existing rating
     existingRating.rating = rating
+
   } else {
     // If the user hasn't rated the recipe, add a new rating
     recipe.ratings.push({ user: userId, rating })
+
   }
 
   // Save the updated recipe
@@ -39,7 +42,7 @@ export const addComment = async (
   content: string,
 ) => {
   // Find the recipe by ID
-  const recipe = (await Recipe.findById(recipeId)) as any
+  const recipe = await Recipe.findById(recipeId) as any
   if (!recipe) {
     throw new AppError(httpStatus.NOT_FOUND, 'Recipe not found')
   }
@@ -61,7 +64,7 @@ export const updateComment = async (
   content: string,
 ) => {
   // Find the recipe by ID
-  const recipe = (await Recipe.findById(recipeId)) as any
+  const recipe = await Recipe.findById(recipeId) as any
   if (!recipe) {
     throw new AppError(httpStatus.NOT_FOUND, 'Recipe not found')
   }
@@ -84,13 +87,14 @@ export const updateComment = async (
   return Recipe.findById(recipeId).lean().exec()
 }
 
+
 export const deleteComment = async (
   userId: string,
   recipeId: string,
   commentId: string, // This is the _id of the comment
 ) => {
   // Find the recipe by ID
-  const recipe = (await Recipe.findById(recipeId)) as any
+  const recipe = await Recipe.findById(recipeId) as any
   if (!recipe) {
     throw new AppError(httpStatus.NOT_FOUND, 'Recipe not found')
   }
@@ -113,40 +117,40 @@ export const deleteComment = async (
   return Recipe.findById(recipeId).lean().exec()
 }
 
+
+
+
 // Upvote or downvote a recipe
-const voteRecipe = async (
+ const voteRecipe = async (
   userId: string,
   recipeId: string,
   voteValue: 1 | -1, // 1 for upvote, -1 for downvote
 ) => {
-  const recipe = (await Recipe.findById(recipeId)) as any
+  const recipe = await Recipe.findById(recipeId) as any;
   if (!recipe) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Recipe not found')
+    throw new AppError(httpStatus.NOT_FOUND, 'Recipe not found');
   }
 
-  const existingVote = recipe.votes.find(
-    (v: any) => v.user.toString() === userId,
-  )
+  const existingVote = recipe.votes.find((v: any) => v.user.toString() === userId);
 
   if (existingVote) {
     // If the user has already voted
     if (existingVote.vote === voteValue) {
       // If the user votes the same, remove the vote (toggle)
-      recipe.votes = recipe.votes.filter(
-        (v: any) => v.user.toString() !== userId,
-      )
+      recipe.votes = recipe.votes.filter((v: any) => v.user.toString() !== userId);
     } else {
       // If the user changes their vote (upvote to downvote or vice versa)
-      existingVote.vote = voteValue
+      existingVote.vote = voteValue;
     }
   } else {
     // If the user hasn't voted yet
-    recipe.votes.push({ user: userId, vote: voteValue })
+    recipe.votes.push({ user: userId, vote: voteValue });
   }
 
-  await recipe.save()
-  return recipe
-}
+  await recipe.save();
+  return recipe;
+};
+
 
 export const SocialServices = {
   addRating,
