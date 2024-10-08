@@ -7,16 +7,25 @@ import { AdminControllers } from './admin.controllers'
 const router = express.Router()
 
 // block user
-router.post('/block/:id', auth(USER_ROLE.admin), AdminControllers.blockUser);
+router.post('/block/:id', auth(USER_ROLE.admin), AdminControllers.blockUser)
 // unblock user
-router.post('/ublock/:id', auth(USER_ROLE.admin), AdminControllers.unBlockUser);
+router.post('/unblock/:id', auth(USER_ROLE.admin), AdminControllers.unBlockUser)
+// approval admin a user
+router.post('/approval/:id', auth(USER_ROLE.admin), AdminControllers.approvalAdmin)
 
 // publish recipe
-router.post('/publish/:id', auth(USER_ROLE.admin), AdminControllers.publishRecipe);
+router.post(
+  '/publish/:id',
+  auth(USER_ROLE.admin),
+  AdminControllers.publishRecipe,
+)
 // unpublish recipe
-router.post('/unpublish/:id', auth(USER_ROLE.admin), AdminControllers.unPublishRecipe);
+router.post(
+  '/unpublish/:id',
+  auth(USER_ROLE.admin),
+  AdminControllers.unPublishRecipe,
+)
 // delete recipe
-router.post('/:id', auth(USER_ROLE.admin), AdminControllers.deleteRecipe);
-
+router.delete('/:id', auth(USER_ROLE.admin), AdminControllers.deleteRecipe)
 
 export const AdminRoutes = router

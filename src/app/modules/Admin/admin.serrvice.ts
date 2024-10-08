@@ -16,6 +16,19 @@ const blockUser = async (id: string) => {
   return result
 }
 
+const approvalAdmin = async (id: string) => {
+  const user = await User.findById(id)
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found')
+  }
+  const result = await User.findByIdAndUpdate(
+    id,
+    { role: 'admin' },
+    { new: true },
+  )
+  return result
+}
+
 const unBlockUser = async (id: string) => {
   const user = await User.findById(id)
   if (!user) {
@@ -29,12 +42,14 @@ const unBlockUser = async (id: string) => {
   return result
 }
 
-const deleteRecipesFromDb = async (id : string) => {
-  const result = await Recipe.findByIdAndDelete(id);
-  return result;
+const deleteRecipesFromDb = async (id: string) => {
+  const result = await Recipe.findByIdAndUpdate(
+    id,
+    { isDeleted: true },
+    { new: true },
+  )
+  return result
 }
-
-
 
 const publishRecipe = async (id: string) => {
   const recipe = await Recipe.findById(id)
@@ -64,8 +79,9 @@ const unPublishRecipe = async (id: string) => {
 
 export const AdminServices = {
   blockUser,
+  approvalAdmin,
   unBlockUser,
   publishRecipe,
   unPublishRecipe,
-  deleteRecipesFromDb
+  deleteRecipesFromDb,
 }

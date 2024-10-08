@@ -43,8 +43,10 @@ const deleteUser = catchAsync(async (req, res) => {
 
 const followUser = catchAsync(async (req, res) => {
     // Get email or username from JWT payload (req.user)
+   
     const userIdentifier = req?.user?.email || req?.user?.username;
-  console.log(userIdentifier);
+    console.log(req?.user);
+  
     // Find the follower user using email or username
     const follower = await User.findOne({
       $or: [{ email: userIdentifier }, { username: userIdentifier }],
@@ -57,7 +59,7 @@ const followUser = catchAsync(async (req, res) => {
   
     const followerId = follower._id; // Follower's ID
     const followeeId : any = req.params.userId; // Followee's ID from the route
-    console.log(followeeId)
+    // console.log(followeeId)
   
     // Call the service to follow the user
     const result = await UserServices.followUser(followerId, followeeId);
@@ -74,7 +76,8 @@ const followUser = catchAsync(async (req, res) => {
 const unFollowUser = catchAsync(async (req, res) => {
     // Get email or username from JWT payload (req.user)
     const userIdentifier = req?.user?.email || req?.user?.username;
-  console.log(userIdentifier);
+    console.log(req?.user);
+  // console.log(userIdentifier);
     // Find the follower user using email or username
     const follower = await User.findOne({
       $or: [{ email: userIdentifier }, { username: userIdentifier }],

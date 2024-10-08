@@ -39,7 +39,10 @@ const getAllRecipes = async (
     .fields().modelQuery // Select specific fields if required // Get the built query
 
   // Execute the final query
-  const recipes = await resultQuery.populate('ratings').populate('comments').populate("author")
+  const recipes = await resultQuery
+    .populate('ratings')
+    .populate('comments')
+    .populate('author')
   const totalData = await queryBuilder.countTotal() // Optional: Get total counts for pagination
 
   return { recipes, totalData }
@@ -49,41 +52,53 @@ const getRecipeById = async (user: JwtPayload, id: string) => {
   // Fetch the recipe by its ID and populate ratings and comments
   const recipe = await Recipe.findById(id)
     .populate('ratings')
-   .populate({
-    path: 'comments',
-    populate: {
-      path: 'user', // Populating the user field in comments
-      
-    },
-  })
-    .populate("author")
+    .populate({
+      path: 'comments',
+      populate: {
+        path: 'user', // Populating the user field in comments
+      },
+    })
+    .populate('author')
 
   // Check if the recipe exists
   if (!recipe) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Recipe not found');
+    throw new AppError(httpStatus.NOT_FOUND, 'Recipe not found')
   }
 
   // Apply restrictions for non-premium users and non-admins
-  if (recipe.isPremium && (!user?.isPremium && user?.role !== 'admin')) {
-    throw new AppError(httpStatus.FORBIDDEN, 'This recipe is only available for premium users');
+  if (recipe.isPremium && !user?.isPremium && user?.role !== 'admin') {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      'This recipe is only available for premium users',
+    )
   }
 
   // Check if the recipe is deleted
   if (recipe.isDeleted) {
-    throw new AppError(httpStatus.NOT_FOUND, 'This recipe has been deleted');
+    throw new AppError(httpStatus.NOT_FOUND, 'This recipe has been deleted')
   }
 
   // Check if the recipe is published
   if (!recipe.isPublished) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'This recipe is not published');
+    throw new AppError(httpStatus.BAD_REQUEST, 'This recipe is not published')
   }
 
   // Return the recipe
-  return recipe;
-};
+  return recipe
+}
 
 const updateRecipeById = async (id: string, payload: Partial<IRecipe>) => {
   const recipe = await Recipe.findById(id)
+  console.log(recipe)
+  // Check if the recipe is deleted
+  if (recipe?.isDeleted) {
+    throw new AppError(httpStatus.NOT_FOUND, 'This recipe has been deleted')
+  }
+
+  // Check if the recipe is published
+  if (!recipe?.isPublished) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'This recipe is not published')
+  }
   if (!recipe) {
     throw new AppError(httpStatus.NOT_FOUND, 'Recipe is not found')
   }
@@ -93,7 +108,11 @@ const updateRecipeById = async (id: string, payload: Partial<IRecipe>) => {
 }
 
 const deleteRecipesFromDb = async (id: string) => {
-  const result = await Recipe.findByIdAndDelete(id)
+  const result = await Recipe.findByIdAndUpdate(
+    id,
+    { isDeleted: true },
+    { new: true },
+  )
   return result
 }
 

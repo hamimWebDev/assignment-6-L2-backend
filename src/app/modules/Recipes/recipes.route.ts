@@ -13,7 +13,7 @@ router.post('/', RecipeControllers.createRecipe);
 router.get("/:recipeId",  RecipeControllers.getRecipeById);
 
 // update recipe
-router.put("/:recipeId", auth( USER_ROLE.user), RecipeControllers.getRecipeById)
+router.put("/:recipeId", auth( USER_ROLE.user), RecipeControllers.updateRecipeById)
 
 // get all recipe
 router.get("/",OptionalAuth(USER_ROLE.admin, USER_ROLE.user), RecipeControllers.getAllRecipes);

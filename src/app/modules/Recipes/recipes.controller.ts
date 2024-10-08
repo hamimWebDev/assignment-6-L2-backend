@@ -45,10 +45,10 @@ const getAllRecipes = catchAsync(async (req, res) => {
 })
 
 const updateRecipeById = catchAsync(async (req, res) => {
-    const { id } = req.params;
+    const { recipeId } = req.params;
     const payload = req.body
     const result = await RecipeServices.updateRecipeById(
-      id,
+      recipeId,
       payload,
     )
     sendResponse(res, {
@@ -60,8 +60,8 @@ const updateRecipeById = catchAsync(async (req, res) => {
   })
 
 const deleteRecipe = catchAsync(async (req, res) => {
-  const { recipeId } = req.params
-  const result = await RecipeServices.deleteRecipesFromDb(recipeId)
+  const { id } = req.params
+  const result = await RecipeServices.deleteRecipesFromDb(id)
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

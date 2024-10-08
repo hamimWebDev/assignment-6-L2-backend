@@ -13,6 +13,16 @@ const blockUser = catchAsync(async (req, res) => {
         data: result,
       })
 })
+const approvalAdmin = catchAsync(async (req, res) => {
+    const {id} = req.params; 
+    const result = await AdminServices.approvalAdmin(id);
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'User approval admin Successfully',
+        data: result,
+      })
+})
 
 const unBlockUser = catchAsync(async (req, res) => {
     const {id} = req.params; 
@@ -63,6 +73,7 @@ const deleteRecipe = catchAsync(async (req, res) => {
 
 export const AdminControllers = {
     blockUser,
+    approvalAdmin,
     unBlockUser,
     publishRecipe,
     unPublishRecipe,
