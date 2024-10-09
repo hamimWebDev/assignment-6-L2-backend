@@ -54,7 +54,6 @@ const followUser = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, vo
     // Get email or username from JWT payload (req.user)
     var _a, _b;
     const userIdentifier = ((_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.email) || ((_b = req === null || req === void 0 ? void 0 : req.user) === null || _b === void 0 ? void 0 : _b.username);
-    console.log(req === null || req === void 0 ? void 0 : req.user);
     // Find the follower user using email or username
     const follower = yield auth_model_1.User.findOne({
         $or: [{ email: userIdentifier }, { username: userIdentifier }],
@@ -65,7 +64,6 @@ const followUser = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, vo
     }
     const followerId = follower._id; // Follower's ID
     const followeeId = req.params.userId; // Followee's ID from the route
-    // console.log(followeeId)
     // Call the service to follow the user
     const result = yield users_services_1.UserServices.followUser(followerId, followeeId);
     // Send the response
@@ -80,8 +78,6 @@ const unFollowUser = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, 
     var _a, _b;
     // Get email or username from JWT payload (req.user)
     const userIdentifier = ((_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.email) || ((_b = req === null || req === void 0 ? void 0 : req.user) === null || _b === void 0 ? void 0 : _b.username);
-    console.log(req === null || req === void 0 ? void 0 : req.user);
-    // console.log(userIdentifier);
     // Find the follower user using email or username
     const follower = yield auth_model_1.User.findOne({
         $or: [{ email: userIdentifier }, { username: userIdentifier }],
@@ -92,7 +88,6 @@ const unFollowUser = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, 
     }
     const followerId = follower._id; // Follower's ID
     const followeeId = req.params.userId; // Followee's ID from the route
-    console.log(followeeId);
     // Call the service to follow the user
     const result = yield users_services_1.UserServices.unfollowUser(followerId, followeeId);
     // Send the response

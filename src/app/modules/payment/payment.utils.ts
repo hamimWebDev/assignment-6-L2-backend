@@ -27,7 +27,6 @@ export const initiatePayment = async (paymentData: any) => {
       cus_phone: paymentData.customerPhone,
       type: 'json',
     })
-      console.log("intial", response)
     return response.data
   } catch (err) {
     throw new Error('Payment initiation fialed ')

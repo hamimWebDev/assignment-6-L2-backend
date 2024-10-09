@@ -82,7 +82,6 @@ const getRecipeById = (user, id) => __awaiter(void 0, void 0, void 0, function* 
 });
 const updateRecipeById = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const recipe = yield recipes_model_1.Recipe.findById(id);
-    console.log(recipe);
     // Check if the recipe is deleted
     if (recipe === null || recipe === void 0 ? void 0 : recipe.isDeleted) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'This recipe has been deleted');

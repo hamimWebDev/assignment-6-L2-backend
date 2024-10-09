@@ -40,7 +40,7 @@ app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 }));
 // Catch-all route for client-side routing
 app.get('*', (req, res) => {
-    res.sendFile(path_1.default.join(__dirname, '..', 'build', 'index.html'));
+    res.sendFile(path_1.default.join(__dirname, '..', 'dist', 'index.html'));
 });
 // global error handler
 app.use(globalErrorHandlers_1.default);

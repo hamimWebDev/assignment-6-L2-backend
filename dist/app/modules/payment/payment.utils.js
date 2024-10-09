@@ -41,7 +41,6 @@ const initiatePayment = (paymentData) => __awaiter(void 0, void 0, void 0, funct
             cus_phone: paymentData.customerPhone,
             type: 'json',
         });
-        console.log("intial", response);
         return response.data;
     }
     catch (err) {

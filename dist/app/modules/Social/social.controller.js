@@ -20,7 +20,6 @@ const social_service_1 = require("./social.service");
 // Add rating to a recipe
 const addRating = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.user;
-    console.log(req.user);
     const { rating } = req.body;
     const { recipeId } = req.params;
     const result = yield social_service_1.SocialServices.addRating(id, recipeId, rating); // Call service to add rating

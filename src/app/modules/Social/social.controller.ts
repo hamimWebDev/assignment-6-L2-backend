@@ -6,7 +6,6 @@ import { SocialServices } from './social.service'
 // Add rating to a recipe
 const addRating = catchAsync(async (req, res) => {
   const { id } = req.user as any
-  console.log(req.user)
   const { rating } = req.body
   const { recipeId } = req.params
 

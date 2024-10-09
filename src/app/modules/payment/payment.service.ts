@@ -8,9 +8,7 @@ import { User } from '../Auth/auth.model'
 
 const confirmationService = async (transactionId: string, status: string) => {
   const verifyResponse = await verifyPayment(transactionId)
-  //   console.log(verifyResponse)
   let paymentData
-  console.log('verifyResponse', verifyResponse)
 
   if (verifyResponse && verifyResponse.pay_status === 'Successful') {
     const updatedPaymentStatus = await Order.findOneAndUpdate(

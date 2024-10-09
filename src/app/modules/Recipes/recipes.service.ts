@@ -89,7 +89,6 @@ const getRecipeById = async (user: JwtPayload, id: string) => {
 
 const updateRecipeById = async (id: string, payload: Partial<IRecipe>) => {
   const recipe = await Recipe.findById(id)
-  console.log(recipe)
   // Check if the recipe is deleted
   if (recipe?.isDeleted) {
     throw new AppError(httpStatus.NOT_FOUND, 'This recipe has been deleted')

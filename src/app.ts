@@ -43,7 +43,7 @@ app.get('/', async (req: Request, res: Response) => {
 
 // Catch-all route for client-side routing
 app.get('*', (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, '..', 'build', 'index.html'))
+  res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'))
 })
 
 
