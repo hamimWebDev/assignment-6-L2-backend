@@ -3,6 +3,15 @@ import AppError from '../../errors/AppError'
 import { User } from '../Auth/auth.model'
 import { Recipe } from '../Recipes/recipes.model'
 
+const getAllUsrFromDb = async () => {
+  const result = await User.find({ isDeleted : false});
+  return result
+}
+const getAllRecipeFromDb = async () => {
+  const result = await Recipe.find({ isDeleted : false});
+  return result
+}
+
 const blockUser = async (id: string) => {
   const user = await User.findById(id)
   if (!user) {
@@ -16,20 +25,7 @@ const blockUser = async (id: string) => {
   return result
 }
 
-const approvalAdmin = async (id: string) => {
-  const user = await User.findById(id)
-  if (!user) {
-    throw new AppError(httpStatus.NOT_FOUND, 'User not found')
-  }
-  const result = await User.findByIdAndUpdate(
-    id,
-    { role: 'admin' },
-    { new: true },
-  )
-  return result
-}
-
-const unBlockUser = async (id: string) => {
+const unBlockUsers = async (id: string) => {
   const user = await User.findById(id)
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found')
@@ -42,14 +38,17 @@ const unBlockUser = async (id: string) => {
   return result
 }
 
-const deleteRecipesFromDb = async (id: string) => {
-  const result = await Recipe.findByIdAndUpdate(
-    id,
-    { isDeleted: true },
-    { new: true },
-  )
-  return result
+const deleteRecipesFromDb = async (id : string) => {
+  const result = await Recipe.findByIdAndUpdate(id, {isDeleted : true}, {new : true});
+  return result;
 }
+
+
+const deleteUserFromDb = async (id : string) => {
+  const result = await User.findByIdAndUpdate(id, {isDeleted : true}, {new : true});
+  return result;
+}
+
 
 const publishRecipe = async (id: string) => {
   const recipe = await Recipe.findById(id)
@@ -79,9 +78,11 @@ const unPublishRecipe = async (id: string) => {
 
 export const AdminServices = {
   blockUser,
-  approvalAdmin,
-  unBlockUser,
+  unBlockUsers,
   publishRecipe,
   unPublishRecipe,
   deleteRecipesFromDb,
+  getAllUsrFromDb,
+  deleteUserFromDb,
+  getAllRecipeFromDb
 }
