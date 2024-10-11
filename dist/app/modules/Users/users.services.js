@@ -44,7 +44,7 @@ const getUserWithAuth = (email) => __awaiter(void 0, void 0, void 0, function* (
     });
     return user;
 });
-const updateUserIntoDb = (email, payload) => __awaiter(void 0, void 0, void 0, function* () {
+const updateUserIntoDb = (email, payload, file) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield auth_model_1.User.findOne({
         email: email,
         isDeleted: false,
@@ -58,6 +58,9 @@ const updateUserIntoDb = (email, payload) => __awaiter(void 0, void 0, void 0, f
     const emailCheck = yield auth_model_1.User.isUserExistsByEmail(newEmail);
     if (emailCheck) {
         throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'This email is already taken');
+    }
+    if (file === null || file === void 0 ? void 0 : file.path) {
+        payload.profilePicture = file.path;
     }
     const updatedUser = yield auth_model_1.User.findOneAndUpdate({ email: email }, payload, {
         new: true,
@@ -75,7 +78,7 @@ const followUser = (followerId, followeeId) => __awaiter(void 0, void 0, void 0,
         throw new Error('You cannot follow yourself');
     }
     // Find both users (follower and followee)
-    const follower = (yield auth_model_1.User.findById(followerId));
+    const follower = yield auth_model_1.User.findById(followerId);
     const followee = yield auth_model_1.User.findById(followeeId);
     if (!followee) {
         throw new Error('User not found');
@@ -108,7 +111,7 @@ const unfollowUser = (followerId, followeeId) => __awaiter(void 0, void 0, void 
         throw new Error('You cannot unfollow yourself');
     }
     // Find both users (follower and followee)
-    const follower = (yield auth_model_1.User.findById(followerId));
+    const follower = yield auth_model_1.User.findById(followerId);
     const followee = yield auth_model_1.User.findById(followeeId);
     if (!followee) {
         throw new Error('User not found');

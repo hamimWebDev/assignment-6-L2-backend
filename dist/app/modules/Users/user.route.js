@@ -8,13 +8,17 @@ const express_1 = __importDefault(require("express"));
 const user_controllers_1 = require("./user.controllers");
 const auth_1 = __importDefault(require("../../middleware/auth"));
 const auth_constance_1 = require("../Auth/auth.constance");
+const multer_config_1 = require("../../config/multer.config");
 const router = express_1.default.Router();
 // get user
 router.get('/:id', user_controllers_1.UserController.getUser);
 // get user with auth
 router.get('/', (0, auth_1.default)(auth_constance_1.USER_ROLE.admin, auth_constance_1.USER_ROLE.user), user_controllers_1.UserController.getUserWithAuth);
 // update user;
-router.put('/update', (0, auth_1.default)(auth_constance_1.USER_ROLE.user), user_controllers_1.UserController.updateUser);
+router.put('/update', multer_config_1.multerUpload.single('file'), (req, res, next) => {
+    req.body = JSON.parse(req.body.data);
+    next();
+}, (0, auth_1.default)(auth_constance_1.USER_ROLE.user, auth_constance_1.USER_ROLE.admin), user_controllers_1.UserController.updateUser);
 // delete user;
 router.delete('/:id', (0, auth_1.default)(auth_constance_1.USER_ROLE.user, auth_constance_1.USER_ROLE.admin), user_controllers_1.UserController.deleteUser);
 // Follow a user

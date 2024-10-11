@@ -43,8 +43,9 @@ const getUserWithAuth = (0, catchAsynch_1.default)((req, res) => __awaiter(void 
 const updateUser = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const email = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.email;
+    const file = req.file;
     const payload = req.body;
-    const result = yield users_services_1.UserServices.updateUserIntoDb(email, payload);
+    const result = yield users_services_1.UserServices.updateUserIntoDb(email, payload, file);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
