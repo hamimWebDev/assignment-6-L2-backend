@@ -18,13 +18,15 @@ const AppError_1 = __importDefault(require("../../errors/AppError"));
 const auth_model_1 = require("../Auth/auth.model");
 const recipes_model_1 = require("./recipes.model");
 const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
-const createRecipesIntoDb = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+const createRecipesIntoDb = (payload, files) => __awaiter(void 0, void 0, void 0, function* () {
+    const { file } = files;
     const { author } = payload;
     const user = yield auth_model_1.User.findById(author);
     if (!user) {
         throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'User not found');
     }
-    const result = yield recipes_model_1.Recipe.create(payload);
+    const recipeData = Object.assign(Object.assign({}, payload), { author: author, images: file.map((image) => image.path) });
+    const result = yield recipes_model_1.Recipe.create(recipeData);
     return result;
 });
 const getAllRecipes = (user, query) => __awaiter(void 0, void 0, void 0, function* () {
@@ -56,11 +58,9 @@ const getRecipeById = (user, id) => __awaiter(void 0, void 0, void 0, function* 
         .populate('ratings')
         .populate({
         path: 'comments',
-        populate: {
-            path: 'user', // Populating the user field in comments
-        },
     })
-        .populate('author');
+        .populate('author')
+        .lean();
     // Check if the recipe exists
     if (!recipe) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Recipe not found');
@@ -82,21 +82,17 @@ const getRecipeById = (user, id) => __awaiter(void 0, void 0, void 0, function* 
 });
 const updateRecipeById = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const recipe = yield recipes_model_1.Recipe.findById(id);
-    // Check if the recipe is deleted
-    if (recipe === null || recipe === void 0 ? void 0 : recipe.isDeleted) {
-        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'This recipe has been deleted');
-    }
-    // Check if the recipe is published
-    if (!(recipe === null || recipe === void 0 ? void 0 : recipe.isPublished)) {
-        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'This recipe is not published');
-    }
     if (!recipe) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'Recipe is not found');
     }
     const result = yield recipes_model_1.Recipe.findByIdAndUpdate(id, payload, { new: true });
     return result;
 });
-const deleteRecipesFromDb = (id) => __awaiter(void 0, void 0, void 0, function* () {
+const deleteRecipesFromDb = (id, user) => __awaiter(void 0, void 0, void 0, function* () {
+    const currentUser = yield auth_model_1.User.findById(user.id);
+    if (!currentUser) {
+        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found');
+    }
     const result = yield recipes_model_1.Recipe.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
     return result;
 });

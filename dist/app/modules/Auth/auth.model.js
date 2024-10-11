@@ -17,6 +17,16 @@ const mongoose_1 = require("mongoose");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const config_1 = __importDefault(require("../../config"));
 const userSchema = new mongoose_1.Schema({
+    _id: {
+        type: mongoose_1.Schema.Types.ObjectId, // Default MongoDB _id
+        auto: true, // Automatically generate an ObjectId
+    },
+    id: {
+        type: String,
+        required: true,
+        unique: true, // Ensure this is unique if necessary
+        default: () => new mongoose_1.Types.ObjectId().toString(), // Generate a new unique id (or you can customize this)
+    },
     name: {
         type: String,
         required: true,

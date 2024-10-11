@@ -19,7 +19,8 @@ const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const social_service_1 = require("./social.service");
 // Add rating to a recipe
 const addRating = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id } = req.user;
+    var _a;
+    const id = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
     const { rating } = req.body;
     const { recipeId } = req.params;
     const result = yield social_service_1.SocialServices.addRating(id, recipeId, rating); // Call service to add rating
@@ -32,7 +33,8 @@ const addRating = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, voi
 }));
 // Add comment to a recipe
 const addComment = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id } = req.user; // Get the user ID from the authenticated request
+    var _a;
+    const id = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id; // Get the user ID from the authenticated request
     const { content } = req.body; // Get the comment text from the request body
     const { recipeId } = req.params; // Get the recipe ID from the URL params
     const result = yield social_service_1.SocialServices.addComment(id, recipeId, content); // Call service to add comment
@@ -45,7 +47,8 @@ const addComment = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, vo
 }));
 // Update comment on a recipe
 const updateComment = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id } = req.user; // User ID from authenticated request
+    var _a;
+    const id = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id; // User ID from authenticated request
     const { content } = req.body; // New content for the comment
     const { recipeId, commentId } = req.params; // Recipe ID and Comment ID (_id) from URL params
     const result = yield social_service_1.SocialServices.updateComment(id, recipeId, commentId, content); // Call service to update comment
@@ -58,8 +61,10 @@ const updateComment = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0,
 }));
 // Delete comment on a recipe
 const deleteComment = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id } = req.user; // User ID from authenticated request
+    var _a;
+    const id = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id; // User ID from authenticated request
     const { recipeId, commentId } = req.params; // Recipe ID and Comment ID (_id) from URL params
+    console.log("user id", id, "commentId", commentId, "recipeId", recipeId);
     const result = yield social_service_1.SocialServices.deleteComment(id, recipeId, commentId); // Call service to delete comment
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
@@ -70,10 +75,11 @@ const deleteComment = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0,
 }));
 // Upvote or downvote a recipe
 const vote = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     const { vote } = req.body; // 1 for upvote, -1 for downvote
     const { recipeId } = req.params;
-    const { id: userId } = req.user; // User ID from authentication
-    const updatedRecipe = yield social_service_1.SocialServices.voteRecipe(userId, recipeId, vote);
+    const id = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id; // User ID from authentication
+    const updatedRecipe = yield social_service_1.SocialServices.voteRecipe(id, recipeId, vote);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
@@ -86,5 +92,5 @@ exports.SocialController = {
     addComment,
     updateComment,
     deleteComment,
-    vote,
+    vote
 };

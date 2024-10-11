@@ -29,10 +29,22 @@ const getUser = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, void 
         data: result,
     });
 }));
+const getUserWithAuth = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const email = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.email;
+    const result = yield users_services_1.UserServices.getUserWithAuth(email);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Get user successfully',
+        data: result,
+    });
+}));
 const updateUser = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id } = req.params;
+    var _a;
+    const email = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.email;
     const payload = req.body;
-    const result = yield users_services_1.UserServices.updateUserIntoDb(id, payload);
+    const result = yield users_services_1.UserServices.updateUserIntoDb(email, payload);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
@@ -51,9 +63,11 @@ const deleteUser = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, vo
     });
 }));
 const followUser = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // Get email or username from JWT payload (req.user)
     var _a, _b;
+    console.log(req.user);
+    // Get email or username from JWT payload (req.user)
     const userIdentifier = ((_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.email) || ((_b = req === null || req === void 0 ? void 0 : req.user) === null || _b === void 0 ? void 0 : _b.username);
+    console.log(userIdentifier);
     // Find the follower user using email or username
     const follower = yield auth_model_1.User.findOne({
         $or: [{ email: userIdentifier }, { username: userIdentifier }],
@@ -64,6 +78,7 @@ const followUser = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, vo
     }
     const followerId = follower._id; // Follower's ID
     const followeeId = req.params.userId; // Followee's ID from the route
+    console.log(followeeId);
     // Call the service to follow the user
     const result = yield users_services_1.UserServices.followUser(followerId, followeeId);
     // Send the response
@@ -78,6 +93,7 @@ const unFollowUser = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, 
     var _a, _b;
     // Get email or username from JWT payload (req.user)
     const userIdentifier = ((_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.email) || ((_b = req === null || req === void 0 ? void 0 : req.user) === null || _b === void 0 ? void 0 : _b.username);
+    console.log(userIdentifier);
     // Find the follower user using email or username
     const follower = yield auth_model_1.User.findOne({
         $or: [{ email: userIdentifier }, { username: userIdentifier }],
@@ -88,6 +104,7 @@ const unFollowUser = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, 
     }
     const followerId = follower._id; // Follower's ID
     const followeeId = req.params.userId; // Followee's ID from the route
+    console.log(followeeId);
     // Call the service to follow the user
     const result = yield users_services_1.UserServices.unfollowUser(followerId, followeeId);
     // Send the response
@@ -100,10 +117,8 @@ const unFollowUser = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, 
 }));
 // get recipes by id
 const getAllRecipesbyUserId = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     const { userId } = req.params;
-    const email = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.email;
-    const result = yield users_services_1.UserServices.getAllRecipesByUserId(userId, email);
+    const result = yield users_services_1.UserServices.getAllRecipesByUserId(userId);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
@@ -117,5 +132,6 @@ exports.UserController = {
     deleteUser,
     followUser,
     unFollowUser,
-    getAllRecipesbyUserId
+    getAllRecipesbyUserId,
+    getUserWithAuth
 };

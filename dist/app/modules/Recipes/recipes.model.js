@@ -8,7 +8,7 @@ const ingredientSchema = new mongoose_1.Schema({
     category: {
         type: String,
         enum: ['Spices', 'Vegetables', 'Meat', 'Dairy', 'Other'], // Allowed ingredient categories
-        required: true,
+        default: "Other"
     },
 });
 // Vote Schema
@@ -21,7 +21,7 @@ const recipeSchema = new mongoose_1.Schema({
     title: { type: String, required: true, trim: true }, // Recipe title
     description: { type: String, trim: true }, // Recipe description
     ingredients: [ingredientSchema], // Array of ingredients
-    instructions: { type: String, required: true }, // Cooking instructions
+    instructions: { type: String, }, // Cooking instructions
     images: [{ type: String }], // URLs to images
     author: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true }, // Author of the recipe
     isPremium: { type: Boolean, default: false }, // Premium flag

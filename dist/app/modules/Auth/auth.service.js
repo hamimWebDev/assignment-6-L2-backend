@@ -21,12 +21,13 @@ const config_1 = __importDefault(require("../../config"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const sendEmails_1 = require("../../utils/sendEmails");
-const signUpUserIntoDb = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+const signUpUserIntoDb = (payload, file) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield auth_model_1.User.findOne({ username: payload.username });
     if (user) {
         throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'This userName is already taken');
     }
-    const result = yield auth_model_1.User.create(payload);
+    const userData = Object.assign(Object.assign({}, payload), { profilePicture: file.path });
+    const result = yield auth_model_1.User.create(userData);
     return result;
 });
 const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
@@ -47,15 +48,15 @@ const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     // access Granted token and refresh token;
     //   create token and sent to the client
     const jwtPayload = {
-        id: user === null || user === void 0 ? void 0 : user.id,
+        id: user === null || user === void 0 ? void 0 : user._id,
         email: user === null || user === void 0 ? void 0 : user.email,
         role: user === null || user === void 0 ? void 0 : user.role,
         name: user === null || user === void 0 ? void 0 : user.name,
         userName: user === null || user === void 0 ? void 0 : user.username,
         profilePicture: user === null || user === void 0 ? void 0 : user.profilePicture,
     };
-    const accessToken = (0, auth_utils_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, config_1.default.jwt_access_expire_in);
-    const refreshToken = (0, auth_utils_1.createToken)(jwtPayload, config_1.default.jwt_refresh_secret, config_1.default.jwt_refrsh_expire_in);
+    const accessToken = (0, auth_utils_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, '1d');
+    const refreshToken = (0, auth_utils_1.createToken)(jwtPayload, config_1.default.jwt_refresh_secret, '365d');
     const { email } = user;
     const userData = yield auth_model_1.User.findOne({ email });
     return {
@@ -126,7 +127,7 @@ const refreshToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
         userName: user === null || user === void 0 ? void 0 : user.username,
         profilePicture: user === null || user === void 0 ? void 0 : user.profilePicture,
     };
-    const accessToken = (0, auth_utils_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, config_1.default.jwt_access_expire_in);
+    const accessToken = (0, auth_utils_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, '1d');
     return {
         accessToken,
     };
@@ -148,7 +149,7 @@ const forgetPassword = (userEmail) => __awaiter(void 0, void 0, void 0, function
         throw new AppError_1.default(http_status_1.default.FORBIDDEN, 'This user is blocked ! !');
     }
     const jwtPayload = {
-        id: user === null || user === void 0 ? void 0 : user._id,
+        id: user === null || user === void 0 ? void 0 : user.id,
         email: user === null || user === void 0 ? void 0 : user.email,
         role: user === null || user === void 0 ? void 0 : user.role,
         name: user === null || user === void 0 ? void 0 : user.name,
@@ -158,6 +159,7 @@ const forgetPassword = (userEmail) => __awaiter(void 0, void 0, void 0, function
     const resetToken = (0, auth_utils_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, '10m');
     const resetUILink = `${config_1.default.reset_pass_ui_link}?email=${user.email}&token=${resetToken}`;
     (0, sendEmails_1.sendEmail)(user.email, resetUILink);
+    // console.log(resetUILink);
 });
 const resetPassword = (payload, token) => __awaiter(void 0, void 0, void 0, function* () {
     // checking if the user is exist
@@ -197,5 +199,5 @@ exports.AuthServices = {
     refreshToken,
     changePassword,
     forgetPassword,
-    resetPassword
+    resetPassword,
 };

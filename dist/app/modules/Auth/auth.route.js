@@ -8,9 +8,18 @@ const express_1 = __importDefault(require("express"));
 const auth_controller_1 = require("./auth.controller");
 const auth_1 = __importDefault(require("../../middleware/auth"));
 const auth_constance_1 = require("./auth.constance");
+const multer_config_1 = require("../../config/multer.config");
+const AppError_1 = __importDefault(require("../../errors/AppError"));
+const http_status_1 = __importDefault(require("http-status"));
 const router = express_1.default.Router();
 // signup user
-router.post('/signup', auth_controller_1.AuthControllers.singupUser);
+router.post('/signup', multer_config_1.multerUpload.single('file'), (req, res, next) => {
+    if (!req.file) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'No file uploaded');
+    }
+    req.body = JSON.parse(req.body.data);
+    next();
+}, auth_controller_1.AuthControllers.singupUser);
 // singin in login
 router.post('/login', auth_controller_1.AuthControllers.loginUser);
 // chnage password

@@ -18,9 +18,14 @@ const catchAsynch_1 = __importDefault(require("../../utils/catchAsynch"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const recipes_service_1 = require("./recipes.service");
 const auth_model_1 = require("../Auth/auth.model");
+const AppError_1 = __importDefault(require("../../errors/AppError"));
 const createRecipe = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.files) {
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'Please upload an image!');
+    }
+    const files = req.files;
     const payload = req.body;
-    const result = yield recipes_service_1.RecipeServices.createRecipesIntoDb(payload);
+    const result = yield recipes_service_1.RecipeServices.createRecipesIntoDb(payload, files);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
@@ -43,7 +48,7 @@ const getAllRecipes = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0,
     var _a;
     const email = (_a = req.user) === null || _a === void 0 ? void 0 : _a.email;
     const query = req.query;
-    const user = yield auth_model_1.User.findOne({ email: email });
+    const user = yield auth_model_1.User.findOne({ email: email, });
     const result = yield recipes_service_1.RecipeServices.getAllRecipes(user, query);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
@@ -53,9 +58,9 @@ const getAllRecipes = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0,
     });
 }));
 const updateRecipeById = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { recipeId } = req.params;
+    const { id } = req.params;
     const payload = req.body;
-    const result = yield recipes_service_1.RecipeServices.updateRecipeById(recipeId, payload);
+    const result = yield recipes_service_1.RecipeServices.updateRecipeById(id, payload);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
@@ -64,8 +69,9 @@ const updateRecipeById = (0, catchAsynch_1.default)((req, res) => __awaiter(void
     });
 }));
 const deleteRecipe = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id } = req.params;
-    const result = yield recipes_service_1.RecipeServices.deleteRecipesFromDb(id);
+    const user = req.user;
+    const { recipeId } = req.params;
+    const result = yield recipes_service_1.RecipeServices.deleteRecipesFromDb(recipeId, user);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,

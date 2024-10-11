@@ -5,14 +5,24 @@ import { IRecipe } from './recipes.interface'
 import { Recipe } from './recipes.model'
 import { JwtPayload } from 'jsonwebtoken'
 import QueryBuilder from '../../builder/QueryBuilder'
+import { TImageFiles } from '../../interface/image.interface'
+import { error } from 'console'
 
-const createRecipesIntoDb = async (payload: IRecipe) => {
+const createRecipesIntoDb = async (payload: IRecipe, files: TImageFiles) => {
+  const { file } = files
   const { author } = payload
   const user = await User.findById(author)
   if (!user) {
     throw new AppError(httpStatus.BAD_REQUEST, 'User not found')
   }
-  const result = await Recipe.create(payload)
+
+  const recipeData: IRecipe = {
+    ...payload,
+    author: author,
+    images: file.map((image) => image.path),
+  }
+
+  const result = await Recipe.create(recipeData)
   return result
 }
 
@@ -54,12 +64,9 @@ const getRecipeById = async (user: JwtPayload, id: string) => {
     .populate('ratings')
     .populate({
       path: 'comments',
-      populate: {
-        path: 'user', // Populating the user field in comments
-      },
     })
     .populate('author')
-
+    .lean()
   // Check if the recipe exists
   if (!recipe) {
     throw new AppError(httpStatus.NOT_FOUND, 'Recipe not found')
@@ -89,15 +96,6 @@ const getRecipeById = async (user: JwtPayload, id: string) => {
 
 const updateRecipeById = async (id: string, payload: Partial<IRecipe>) => {
   const recipe = await Recipe.findById(id)
-  // Check if the recipe is deleted
-  if (recipe?.isDeleted) {
-    throw new AppError(httpStatus.NOT_FOUND, 'This recipe has been deleted')
-  }
-
-  // Check if the recipe is published
-  if (!recipe?.isPublished) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'This recipe is not published')
-  }
   if (!recipe) {
     throw new AppError(httpStatus.NOT_FOUND, 'Recipe is not found')
   }
@@ -106,12 +104,12 @@ const updateRecipeById = async (id: string, payload: Partial<IRecipe>) => {
   return result
 }
 
-const deleteRecipesFromDb = async (id: string) => {
-  const result = await Recipe.findByIdAndUpdate(
-    id,
-    { isDeleted: true },
-    { new: true },
-  )
+const deleteRecipesFromDb = async (id: string, user: JwtPayload) => {
+  const currentUser = await User.findById(user.id)
+  if (!currentUser) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found')
+  }
+  const result = await Recipe.findByIdAndUpdate(id, {isDeleted : true}, {new : true})
   return result
 }
 

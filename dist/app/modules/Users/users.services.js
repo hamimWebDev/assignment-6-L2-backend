@@ -22,15 +22,31 @@ const getUserFromDb = (id) => __awaiter(void 0, void 0, void 0, function* () {
         _id: id,
         isBlocked: false,
         isDeleted: false,
+    })
+        .populate({
+        path: 'followers',
+    })
+        .populate({
+        path: 'following',
     });
     if (!user) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found');
     }
     return user;
 });
-const updateUserIntoDb = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+const getUserWithAuth = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield auth_model_1.User.findOne({ email: email })
+        .populate({
+        path: 'followers',
+    })
+        .populate({
+        path: 'following',
+    });
+    return user;
+});
+const updateUserIntoDb = (email, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield auth_model_1.User.findOne({
-        _id: id,
+        email: email,
         isDeleted: false,
         isBlocked: false,
     });
@@ -38,16 +54,12 @@ const updateUserIntoDb = (id, payload) => __awaiter(void 0, void 0, void 0, func
     if (!user) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'This user is not found');
     }
-    const { email: newEmail, username: newUsername } = payload;
+    const { email: newEmail } = payload;
     const emailCheck = yield auth_model_1.User.isUserExistsByEmail(newEmail);
-    const userNameCheck = yield auth_model_1.User.findOne({ username: newUsername });
     if (emailCheck) {
         throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'This email is already taken');
     }
-    if (userNameCheck) {
-        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'This userName is already taken');
-    }
-    const updatedUser = yield auth_model_1.User.findByIdAndUpdate(id, payload, {
+    const updatedUser = yield auth_model_1.User.findOneAndUpdate({ email: email }, payload, {
         new: true,
     });
     return updatedUser;
@@ -117,15 +129,21 @@ const unfollowUser = (followerId, followeeId) => __awaiter(void 0, void 0, void 
     yield auth_model_1.User.findByIdAndUpdate(followeeId, { followers: updatedFollowersList });
     return updatedFollowersList.length; // Return the updated number of followers
 });
-const getAllRecipesByUserId = (userId, email) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield auth_model_1.User.findOne({ email: email });
-    if (!user) {
-        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found');
-    }
-    // Check if the user is premium or admin
-    const isPremium = user.isPremium || user.role === 'admin';
+const getAllRecipesByUserId = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     // Query to fetch recipes based on the user's premium status
-    const recipes = yield recipes_model_1.Recipe.find(Object.assign({ author: userId, isDeleted: false, isPublished: true }, (isPremium ? {} : { isPremium: false })));
+    const recipes = yield recipes_model_1.Recipe.find({
+        author: userId,
+        isDeleted: false,
+        isPublished: true,
+    })
+        .populate('ratings')
+        .populate({
+        path: 'comments',
+        populate: {
+            path: 'user', // Populating the user field in comments
+        },
+    })
+        .populate('author');
     return recipes; // Return the fetched recipes
 });
 exports.UserServices = {
@@ -135,4 +153,5 @@ exports.UserServices = {
     followUser,
     unfollowUser,
     getAllRecipesByUserId,
+    getUserWithAuth,
 };
