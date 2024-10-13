@@ -24,7 +24,7 @@ const initiatePayment = (paymentData) => __awaiter(void 0, void 0, void 0, funct
             tran_id: paymentData.transactionId,
             success_url: `http://localhost:5000/api/payment/confirmation?transactionId=${paymentData.transactionId}&status=success`,
             fail_url: `http://localhost:5000/api/payment/confirmation?status=failed`,
-            cancel_url: 'http://localhost:5173/',
+            cancel_url: 'http://localhost:3000/',
             amount: paymentData.totalPrice,
             currency: 'BDT',
             desc: 'Merchant Registration Payment',
@@ -41,6 +41,7 @@ const initiatePayment = (paymentData) => __awaiter(void 0, void 0, void 0, funct
             cus_phone: paymentData.customerPhone,
             type: 'json',
         });
+        console.log("intial", response);
         return response.data;
     }
     catch (err) {

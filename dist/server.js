@@ -30,9 +30,9 @@ function main() {
     });
 }
 main();
-process.on('unhandledRejection', (err) => {
+process.on("unhandledRejection", (err) => {
     console.log(`unhandledRejection is detected shutting down the server`);
-    console.log('err', err);
+    console.log("err", err);
     if (server) {
         server.close(() => {
             process.exit(1);
@@ -40,8 +40,7 @@ process.on('unhandledRejection', (err) => {
     }
     process.exit(1);
 });
-//update more
-process.on('uncaughtException', () => {
+process.on("uncaughtException", () => {
     console.log(`uncaughtException is detected shutting down the server`);
     process.exit(1);
 });

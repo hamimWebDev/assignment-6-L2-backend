@@ -1,26 +1,34 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const zod_1 = require("zod");
 const config_1 = __importDefault(require("../config"));
-const handleCastError_1 = require("../errors/handleCastError");
-const handleDuplicateError_1 = require("../errors/handleDuplicateError");
 const AppError_1 = __importDefault(require("../errors/AppError"));
 const handleZodeError_1 = require("../errors/handleZodeError");
 const handleValidationError_1 = require("../errors/handleValidationError");
-const globalErrorHandler = (err, req, res, next) => {
-    console.log(err);
-    let statusCode = err.statusCode || 500;
-    let message = err.message || 'Something went wrong';
+const handleCastError_1 = require("../errors/handleCastError");
+const handleDuplicateError_1 = require("../errors/handleDuplicateError");
+const globalErrorHandler = (err, req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    //setting default values
+    let statusCode = 500;
+    let message = 'Something went wrong!';
     let errorSources = [
         {
             path: '',
             message: 'Something went wrong',
         },
     ];
-    // Handle different types of errors
     if (err instanceof zod_1.ZodError) {
         const simplifiedError = (0, handleZodeError_1.handleZodError)(err);
         statusCode = simplifiedError === null || simplifiedError === void 0 ? void 0 : simplifiedError.statusCode;
@@ -47,7 +55,7 @@ const globalErrorHandler = (err, req, res, next) => {
     }
     else if (err instanceof AppError_1.default) {
         statusCode = err === null || err === void 0 ? void 0 : err.statusCode;
-        message = err === null || err === void 0 ? void 0 : err.message;
+        message = err.message;
         errorSources = [
             {
                 path: '',
@@ -56,7 +64,7 @@ const globalErrorHandler = (err, req, res, next) => {
         ];
     }
     else if (err instanceof Error) {
-        message = err === null || err === void 0 ? void 0 : err.message;
+        message = err.message;
         errorSources = [
             {
                 path: '',
@@ -64,21 +72,13 @@ const globalErrorHandler = (err, req, res, next) => {
             },
         ];
     }
-    // Unauthorized error specific handling
-    if (message === 'You have no access to this route') {
-        res.status(statusCode).json({
-            success: false,
-            statusCode,
-            message,
-        });
-        return; // ensure void return
-    }
-    // Final response
-    res.status(statusCode).json({
+    //ultimate return
+    return res.status(statusCode).json({
         success: false,
         message,
         errorSources,
-        stack: config_1.default.NODE_ENV === 'development' ? err === null || err === void 0 ? void 0 : err.stack : undefined,
+        err,
+        stack: config_1.default.NODE_ENV === 'development' ? err === null || err === void 0 ? void 0 : err.stack : null,
     });
-};
+});
 exports.default = globalErrorHandler;

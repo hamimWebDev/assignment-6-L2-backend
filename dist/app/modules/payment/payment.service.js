@@ -22,7 +22,9 @@ const order_constance_1 = require("../Order/order.constance");
 const auth_model_1 = require("../Auth/auth.model");
 const confirmationService = (transactionId, status) => __awaiter(void 0, void 0, void 0, function* () {
     const verifyResponse = yield (0, payment_utils_1.verifyPayment)(transactionId);
+    //   console.log(verifyResponse)
     let paymentData;
+    console.log('verifyResponse', verifyResponse);
     if (verifyResponse && verifyResponse.pay_status === 'Successful') {
         const updatedPaymentStatus = yield order_model_1.Order.findOneAndUpdate({ transactionId }, {
             paymentStatus: order_constance_1.Payment_Status.paid,

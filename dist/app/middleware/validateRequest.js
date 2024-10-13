@@ -18,7 +18,7 @@ const validateRequest = (schema) => {
         //  validation
         yield schema.parseAsync({
             body: req.body,
-            cookies: req.cookies
+            cookies: req.cookies,
         });
         next();
     }));

@@ -18,8 +18,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const auth_model_1 = require("../modules/Auth/auth.model");
 const OptionalAuth = (...requiredRoles) => {
     return (0, catchAsynch_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a;
-        const token = (_a = req.headers['authorization']) === null || _a === void 0 ? void 0 : _a.split(' ')[1]; // Get token if available
+        const token = req.headers['authorization'];
         // If no token is provided, proceed without authentication
         if (!token) {
             req.user = null; // Set req.user to null if no token is provided
@@ -38,7 +37,8 @@ const OptionalAuth = (...requiredRoles) => {
             // Assign the user information to req.user
             req.user = decoded; // Attach the user info to the request
             // Check if user has required role if roles are specified
-            if (requiredRoles.length > 0 && !requiredRoles.includes(decoded.role)) {
+            if (requiredRoles.length > 0 &&
+                !requiredRoles.includes(decoded.role)) {
                 req.user = null; // Reset user if they don't have the required role
                 return next(); // Allow the request to continue
             }

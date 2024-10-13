@@ -146,7 +146,6 @@ const voteRecipe = (userId, recipeId, voteValue) => __awaiter(void 0, void 0, vo
     }
     else {
         // If the user hasn't voted yet
-        //@ts-ignore
         (_c = recipe === null || recipe === void 0 ? void 0 : recipe.votes) === null || _c === void 0 ? void 0 : _c.push({ user: userId, vote: voteValue });
     }
     yield recipe.save();

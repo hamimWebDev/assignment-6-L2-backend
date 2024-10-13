@@ -23,10 +23,11 @@ const app = (0, express_1.default)();
 // parser
 app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
-// cors configuration
-app.use((0, cors_1.default)({ origin: 'http://localhost:3000', credentials: true }));
+// cors configaration
+app.use((0, cors_1.default)({ origin: "https://recipe-circle-frontend.vercel.app", credentials: true }));
 // Serve static files from the 'build' directory
 app.use(express_1.default.static(path_1.default.join(__dirname, "..", "build")));
+// // Set the directory for EJS views
 // app.set("views", path.join(__dirname, "..", "./views")); // Ensure this points to your views folder
 app.set("view engine", "ejs"); // Set EJS as the view engine
 // Serve static files from the "public" directory
@@ -40,7 +41,7 @@ app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 }));
 // Catch-all route for client-side routing
 app.get('*', (req, res) => {
-    res.sendFile(path_1.default.join(__dirname, '..', 'dist', 'index.html'));
+    res.sendFile(path_1.default.join(__dirname, '..', 'build', 'index.html'));
 });
 // global error handler
 app.use(globalErrorHandlers_1.default);

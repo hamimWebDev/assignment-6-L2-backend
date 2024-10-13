@@ -43,10 +43,9 @@ const createOrder = (user, payload) => __awaiter(void 0, void 0, void 0, functio
         totalPrice: payload.totalPrice,
         subscriptionDuration: payload.subscriptionDuration,
         startDate: payload.startDate || new Date(), // Default to the current date if not provided
-        endDate: payload.endDate ||
-            (0, moment_1.default)().add(payload.subscriptionDuration, 'months').toDate(), // Calculate endDate based on subscriptionDuration
+        endDate: payload.endDate || (0, moment_1.default)().add(payload.subscriptionDuration, 'months').toDate(), // Calculate endDate based on subscriptionDuration
         status: payload.status || 'pending',
-        transactionId: transactionId,
+        transactionId: transactionId
     };
     // Create the new order
     const order = yield order_model_1.Order.create(orderData);
@@ -56,10 +55,9 @@ const createOrder = (user, payload) => __awaiter(void 0, void 0, void 0, functio
         custormerName: isUser.name,
         customerEmail: isUser.email,
         customerPhone: isUser.phone,
-        customerAddress: 'Bogura, Bangladesh',
+        customerAddress: "Bogura, Bangladesh",
         startDate: payload.startDate || new Date(),
-        endDate: payload.endDate ||
-            (0, moment_1.default)().add(payload === null || payload === void 0 ? void 0 : payload.subscriptionDuration, 'months').toDate(),
+        endDate: payload.endDate || (0, moment_1.default)().add(payload === null || payload === void 0 ? void 0 : payload.subscriptionDuration, 'months').toDate(),
     };
     const paymentSeasion = yield (0, payment_utils_1.initiatePayment)(paymentData);
     return paymentSeasion;

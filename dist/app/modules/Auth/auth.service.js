@@ -22,16 +22,16 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const sendEmails_1 = require("../../utils/sendEmails");
 const signUpUserIntoDb = (payload, file) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield auth_model_1.User.findOne({ username: payload.username });
+    const user = yield auth_model_1.User.findOne({ email: payload.email });
     if (user) {
-        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'This userName is already taken');
+        throw new AppError_1.default(http_status_1.default.BAD_REQUEST, 'This email is already taken');
     }
     const userData = Object.assign(Object.assign({}, payload), { profilePicture: file.path });
     const result = yield auth_model_1.User.create(userData);
     return result;
 });
 const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield auth_model_1.User.isUserExistsByEmail(payload.email);
+    const user = yield auth_model_1.User.isUserExistsByEmail(payload === null || payload === void 0 ? void 0 : payload.email);
     // if user not found
     if (!user) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'This user is not found');
@@ -55,7 +55,7 @@ const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         userName: user === null || user === void 0 ? void 0 : user.username,
         profilePicture: user === null || user === void 0 ? void 0 : user.profilePicture,
     };
-    const accessToken = (0, auth_utils_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, '1d');
+    const accessToken = (0, auth_utils_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, '10d');
     const refreshToken = (0, auth_utils_1.createToken)(jwtPayload, config_1.default.jwt_refresh_secret, '365d');
     const { email } = user;
     const userData = yield auth_model_1.User.findOne({ email });
@@ -127,7 +127,7 @@ const refreshToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
         userName: user === null || user === void 0 ? void 0 : user.username,
         profilePicture: user === null || user === void 0 ? void 0 : user.profilePicture,
     };
-    const accessToken = (0, auth_utils_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, '1d');
+    const accessToken = (0, auth_utils_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, '10d');
     return {
         accessToken,
     };
@@ -149,7 +149,7 @@ const forgetPassword = (userEmail) => __awaiter(void 0, void 0, void 0, function
         throw new AppError_1.default(http_status_1.default.FORBIDDEN, 'This user is blocked ! !');
     }
     const jwtPayload = {
-        id: user === null || user === void 0 ? void 0 : user.id,
+        id: user === null || user === void 0 ? void 0 : user._id,
         email: user === null || user === void 0 ? void 0 : user.email,
         role: user === null || user === void 0 ? void 0 : user.role,
         name: user === null || user === void 0 ? void 0 : user.name,
@@ -157,7 +157,7 @@ const forgetPassword = (userEmail) => __awaiter(void 0, void 0, void 0, function
         profilePicture: user === null || user === void 0 ? void 0 : user.profilePicture,
     };
     const resetToken = (0, auth_utils_1.createToken)(jwtPayload, config_1.default.jwt_access_secret, '10m');
-    const resetUILink = `${config_1.default.reset_pass_ui_link}?email=${user.email}&token=${resetToken}`;
+    const resetUILink = `${config_1.default.reset_pass_ui_link}/reset-password?email=${user.email}&token=${resetToken}`;
     (0, sendEmails_1.sendEmail)(user.email, resetUILink);
     // console.log(resetUILink);
 });

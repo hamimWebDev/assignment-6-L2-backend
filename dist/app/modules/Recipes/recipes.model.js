@@ -23,15 +23,15 @@ const recipeSchema = new mongoose_1.Schema({
     ingredients: [ingredientSchema], // Array of ingredients
     instructions: { type: String, }, // Cooking instructions
     images: [{ type: String }], // URLs to images
-    author: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true }, // Author of the recipe
+    author: { type: mongoose_1.Types.ObjectId, ref: 'User', required: true }, // Author of the recipe
     isPremium: { type: Boolean, default: false }, // Premium flag
     isDeleted: { type: Boolean, default: false }, // Deleted flag
     isPublished: { type: Boolean, default: true }, // Published flag
     tags: [{ type: String }], // Tags for the recipe
     cookingTime: { type: Number, required: true }, // Cooking time in minutes
     // References for ratings and comments
-    ratings: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'Rating' }], // References to Rating documents
-    comments: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'Comment' }], // References to Comment documents
+    ratings: [{ type: mongoose_1.Types.ObjectId, ref: 'Rating' }], // References to Rating documents
+    comments: [{ type: mongoose_1.Types.ObjectId, ref: 'Comment' }], // References to Comment documents
     votes: { type: [voteSchema], default: [] }, // Embedded vote schema
 }, { timestamps: true });
 // Virtual field for average rating

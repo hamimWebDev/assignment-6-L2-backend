@@ -25,9 +25,9 @@ const createOrder = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, v
         statusCode: http_status_1.default.OK,
         success: true,
         message: 'Order created Successfully',
-        data: order,
+        data: order
     });
 }));
 exports.OrderControllers = {
-    createOrder,
+    createOrder
 };

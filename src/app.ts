@@ -12,15 +12,15 @@ const app: Application = express()
 app.use(express.json())
 app.use(cockieParser())
 
-// cors configuration
-app.use(cors({origin: 'http://localhost:3000', credentials : true }))
+// cors configaration
+app.use(cors({origin: "https://recipe-circle-frontend.vercel.app", credentials : true }))
 
 
 // Serve static files from the 'build' directory
 app.use(express.static(path.join(__dirname, "..", "build")));
 
 
-
+// // Set the directory for EJS views
 // app.set("views", path.join(__dirname, "..", "./views")); // Ensure this points to your views folder
 app.set("view engine", "ejs"); // Set EJS as the view engine
 
@@ -43,7 +43,7 @@ app.get('/', async (req: Request, res: Response) => {
 
 // Catch-all route for client-side routing
 app.get('*', (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'))
+  res.sendFile(path.join(__dirname, '..', 'build', 'index.html'))
 })
 
 

@@ -1,19 +1,23 @@
 import { ErrorRequestHandler } from 'express';
 import { ZodError } from 'zod';
-import { TErrorSources } from '../interface/error';
 import config from '../config';
-import { handleCastError } from '../errors/handleCastError';
-import { handleDuplicateError } from '../errors/handleDuplicateError';
 import AppError from '../errors/AppError';
+import { TErrorSources } from '../interface/error';
+import { TImageFiles } from '../interface/image.interface';
 import { handleZodError } from '../errors/handleZodeError';
 import { handleValidationError } from '../errors/handleValidationError';
-import { Request, Response, NextFunction } from 'express';
+import { handleCastError } from '../errors/handleCastError';
+import { handleDuplicateError } from '../errors/handleDuplicateError';
 
-const globalErrorHandler: ErrorRequestHandler = (err, req: Request, res: Response, next: NextFunction): void => {
-  console.log(err);
-
-  let statusCode = err.statusCode || 500;
-  let message = err.message || 'Something went wrong';
+const globalErrorHandler: ErrorRequestHandler = async (
+  err,
+  req,
+  res,
+  next,
+): Promise<any> => {
+  //setting default values
+  let statusCode = 500;
+  let message = 'Something went wrong!';
   let errorSources: TErrorSources = [
     {
       path: '',
@@ -21,7 +25,8 @@ const globalErrorHandler: ErrorRequestHandler = (err, req: Request, res: Respons
     },
   ];
 
-  // Handle different types of errors
+  
+
   if (err instanceof ZodError) {
     const simplifiedError = handleZodError(err);
     statusCode = simplifiedError?.statusCode;
@@ -44,7 +49,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, req: Request, res: Respons
     errorSources = simplifiedError?.errorSources;
   } else if (err instanceof AppError) {
     statusCode = err?.statusCode;
-    message = err?.message;
+    message = err.message;
     errorSources = [
       {
         path: '',
@@ -52,7 +57,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, req: Request, res: Respons
       },
     ];
   } else if (err instanceof Error) {
-    message = err?.message;
+    message = err.message;
     errorSources = [
       {
         path: '',
@@ -61,22 +66,13 @@ const globalErrorHandler: ErrorRequestHandler = (err, req: Request, res: Respons
     ];
   }
 
-  // Unauthorized error specific handling
-  if (message === 'You have no access to this route') {
-    res.status(statusCode).json({
-      success: false,
-      statusCode,
-      message,
-    });
-    return; // ensure void return
-  }
-
-  // Final response
-  res.status(statusCode).json({
+  //ultimate return
+  return res.status(statusCode).json({
     success: false,
     message,
     errorSources,
-    stack: config.NODE_ENV === 'development' ? err?.stack : undefined,
+    err,
+    stack: config.NODE_ENV === 'development' ? err?.stack : null,
   });
 };
 

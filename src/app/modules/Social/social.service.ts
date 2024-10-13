@@ -25,11 +25,11 @@ export const addRating = async (
     await existingRating.save();
   } else {
     // If no existing rating, create a new one
-    const newRating = new Rating({
+    const newRating : any = new Rating({
       user: userId,
       recipe: recipeId,
       rating: ratingValue,
-    }) as any;
+    });
     await newRating.save();
 
     // Push the rating reference to the recipe's `ratings` array
@@ -57,11 +57,11 @@ export const addComment = async (
   }
 
   // Create a new comment
-  const newComment = await Comment.create({
+  const newComment : any = await Comment.create({
     recipe: recipeId,
     user: userId,
     content: content,
-  }) as any;
+  });
 
   // Add the new comment's ID to the recipe's comments array
   recipe?.comments?.push(newComment._id);
@@ -154,7 +154,7 @@ export const deleteComment = async (
   recipeId: string,
   voteValue: 1 | -1, // 1 for upvote, -1 for downvote
 ) => {
-  const recipe = await Recipe.findById(recipeId);
+  const recipe : any = await Recipe.findById(recipeId);
   if (!recipe) {
     throw new AppError(httpStatus.NOT_FOUND, 'Recipe not found');
   }
@@ -172,7 +172,6 @@ export const deleteComment = async (
     }
   } else {
     // If the user hasn't voted yet
-    //@ts-ignore
     recipe?.votes?.push({ user: userId, vote: voteValue });
   }
 

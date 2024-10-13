@@ -53,13 +53,13 @@ const getAllRecipes = (user, query) => __awaiter(void 0, void 0, void 0, functio
     return { recipes, totalData };
 });
 const getRecipeById = (user, id) => __awaiter(void 0, void 0, void 0, function* () {
-    // Fetch the recipe by its ID and populate ratings and comments
+    // Fetch the recipe by its ID and populate ratings, comments, and their users
     const recipe = yield recipes_model_1.Recipe.findById(id)
-        .populate('ratings')
+        .populate('ratings') // Populating ratings
         .populate({
-        path: 'comments',
+        path: 'comments', // Populating comments
     })
-        .populate('author')
+        .populate('author') // Populating the recipe author
         .lean();
     // Check if the recipe exists
     if (!recipe) {

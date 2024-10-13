@@ -9,16 +9,19 @@ const auth_1 = __importDefault(require("../../middleware/auth"));
 const auth_constance_1 = require("../Auth/auth.constance");
 const admin_controllers_1 = require("./admin.controllers");
 const router = express_1.default.Router();
+// get all user
+router.get('/user', (0, auth_1.default)(auth_constance_1.USER_ROLE.admin), admin_controllers_1.AdminControllers.getAllUser);
+router.get("/recipe", (0, auth_1.default)(auth_constance_1.USER_ROLE.admin), admin_controllers_1.AdminControllers.getAllRecipe);
 // block user
-router.post('/block/:id', (0, auth_1.default)(auth_constance_1.USER_ROLE.admin), admin_controllers_1.AdminControllers.blockUser);
+router.put('/block/:id', (0, auth_1.default)(auth_constance_1.USER_ROLE.admin), admin_controllers_1.AdminControllers.blockUser);
 // unblock user
-router.post('/unblock/:id', (0, auth_1.default)(auth_constance_1.USER_ROLE.admin), admin_controllers_1.AdminControllers.unBlockUser);
-// approval admin a user
-router.post('/approval/:id', (0, auth_1.default)(auth_constance_1.USER_ROLE.admin), admin_controllers_1.AdminControllers.approvalAdmin);
+router.put('/unblock/:id', (0, auth_1.default)(auth_constance_1.USER_ROLE.admin), admin_controllers_1.AdminControllers.unBlockUser);
 // publish recipe
-router.post('/publish/:id', (0, auth_1.default)(auth_constance_1.USER_ROLE.admin), admin_controllers_1.AdminControllers.publishRecipe);
+router.put('/publish/:id', (0, auth_1.default)(auth_constance_1.USER_ROLE.admin), admin_controllers_1.AdminControllers.publishRecipe);
 // unpublish recipe
-router.post('/unpublish/:id', (0, auth_1.default)(auth_constance_1.USER_ROLE.admin), admin_controllers_1.AdminControllers.unPublishRecipe);
+router.put('/unpublish/:id', (0, auth_1.default)(auth_constance_1.USER_ROLE.admin), admin_controllers_1.AdminControllers.unPublishRecipe);
 // delete recipe
-router.delete('/:id', (0, auth_1.default)(auth_constance_1.USER_ROLE.admin), admin_controllers_1.AdminControllers.deleteRecipe);
+router.delete('recipe/:id', (0, auth_1.default)(auth_constance_1.USER_ROLE.admin), admin_controllers_1.AdminControllers.deleteRecipe);
+// delete user
+router.delete('/user/:id', (0, auth_1.default)(auth_constance_1.USER_ROLE.admin), admin_controllers_1.AdminControllers.deleteUser);
 exports.AdminRoutes = router;

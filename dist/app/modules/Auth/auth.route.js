@@ -11,6 +11,8 @@ const auth_constance_1 = require("./auth.constance");
 const multer_config_1 = require("../../config/multer.config");
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const http_status_1 = __importDefault(require("http-status"));
+const validateRequest_1 = __importDefault(require("../../middleware/validateRequest"));
+const auth_validation_1 = require("./auth.validation");
 const router = express_1.default.Router();
 // signup user
 router.post('/signup', multer_config_1.multerUpload.single('file'), (req, res, next) => {
@@ -19,13 +21,13 @@ router.post('/signup', multer_config_1.multerUpload.single('file'), (req, res, n
     }
     req.body = JSON.parse(req.body.data);
     next();
-}, auth_controller_1.AuthControllers.singupUser);
+}, (0, validateRequest_1.default)(auth_validation_1.AuthValidation.userValidationSchema), auth_controller_1.AuthControllers.singupUser);
 // singin in login
-router.post('/login', auth_controller_1.AuthControllers.loginUser);
+router.post('/login', auth_controller_1.AuthControllers.loginUser, (0, validateRequest_1.default)(auth_validation_1.AuthValidation.loginValidationSchema));
 // chnage password
-router.post('/change-password', (0, auth_1.default)(auth_constance_1.USER_ROLE.admin, auth_constance_1.USER_ROLE.user), auth_controller_1.AuthControllers.changePassword);
+router.post('/change-password', (0, auth_1.default)(auth_constance_1.USER_ROLE.admin, auth_constance_1.USER_ROLE.user), (0, validateRequest_1.default)(auth_validation_1.AuthValidation.changePasswordValidationSchema), auth_controller_1.AuthControllers.changePassword);
 // refrsh token
-router.post('/refresh-token', auth_controller_1.AuthControllers.refreshToken);
-router.post('/forget-password', auth_controller_1.AuthControllers.forgetPassword);
-router.post('/reset-password', auth_controller_1.AuthControllers.resetPassword);
+router.post('/refresh-token', (0, validateRequest_1.default)(auth_validation_1.AuthValidation.refreshTokenValidationSchema), auth_controller_1.AuthControllers.refreshToken);
+router.post('/forget-password', (0, validateRequest_1.default)(auth_validation_1.AuthValidation.forgetPasswordValidationSchema), auth_controller_1.AuthControllers.forgetPassword);
+router.post('/reset-password', (0, validateRequest_1.default)(auth_validation_1.AuthValidation.resetPasswordValidationSchema), auth_controller_1.AuthControllers.resetPassword);
 exports.AuthRoutes = router;

@@ -9,18 +9,22 @@ import bcrypt from 'bcrypt'
 import { sendEmail } from '../../utils/sendEmails'
 import { TImageFile } from '../../interface/image.interface'
 
-const signUpUserIntoDb = async (payload: IUser) => {
+const signUpUserIntoDb = async (payload: IUser, file: TImageFile) => {
   const user = await User.findOne({ email: payload.email })
   if (user) {
     throw new AppError(httpStatus.BAD_REQUEST, 'This email is already taken')
   }
- 
-  const result = await User.create(payload)
+
+  const userData: IUser = {
+    ...payload,
+    profilePicture: file.path,
+  }
+  const result = await User.create(userData)
   return result
 }
 
 const loginUser = async (payload: ILoginUser) => {
-  const user = await User.isUserExistsByEmail(payload.email)
+  const user = await User.isUserExistsByEmail(payload?.email)
 
   // if user not found
   if (!user) {
@@ -53,7 +57,7 @@ const loginUser = async (payload: ILoginUser) => {
   const accessToken = createToken(
     jwtPayload,
     config.jwt_access_secret as string,
-    '1d' as string,
+    '10d' as string,
   )
 
   const refreshToken = createToken(
@@ -169,8 +173,9 @@ const refreshToken = async (token: string) => {
   const accessToken = createToken(
     jwtPayload,
     config.jwt_access_secret as string,
-    '1d' as string,
+    '10d' as string,
   )
+
   return {
     accessToken,
   }
@@ -198,7 +203,7 @@ const forgetPassword = async (userEmail: string) => {
   }
 
   const jwtPayload = {
-    id: user?.id,
+    id: user?._id,
     email: user?.email,
     role: user?.role,
     name: user?.name,
@@ -207,12 +212,12 @@ const forgetPassword = async (userEmail: string) => {
   }
 
   const resetToken = createToken(
-    jwtPayload as any,
+    jwtPayload,
     config.jwt_access_secret as string,
     '10m',
   )
 
-  const resetUILink = `${config.reset_pass_ui_link}?email=${user.email}&token=${resetToken}`
+  const resetUILink = `${config.reset_pass_ui_link}/reset-password?email=${user.email}&token=${resetToken}`
 
   sendEmail(user.email, resetUILink)
 

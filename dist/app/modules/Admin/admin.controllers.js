@@ -17,6 +17,26 @@ const http_status_1 = __importDefault(require("http-status"));
 const catchAsynch_1 = __importDefault(require("../../utils/catchAsynch"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const admin_serrvice_1 = require("./admin.serrvice");
+// get all user from db
+const getAllUser = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield admin_serrvice_1.AdminServices.getAllUsrFromDb();
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'User Retrive Successfully',
+        data: result,
+    });
+}));
+// get all user from db
+const getAllRecipe = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield admin_serrvice_1.AdminServices.getAllRecipeFromDb();
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Recipe Retrive Successfully',
+        data: result,
+    });
+}));
 const blockUser = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const result = yield admin_serrvice_1.AdminServices.blockUser(id);
@@ -27,19 +47,9 @@ const blockUser = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, voi
         data: result,
     });
 }));
-const approvalAdmin = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id } = req.params;
-    const result = yield admin_serrvice_1.AdminServices.approvalAdmin(id);
-    (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.OK,
-        success: true,
-        message: 'User approval admin Successfully',
-        data: result,
-    });
-}));
 const unBlockUser = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const result = yield admin_serrvice_1.AdminServices.unBlockUser(id);
+    const result = yield admin_serrvice_1.AdminServices.unBlockUsers(id);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
@@ -77,11 +87,23 @@ const deleteRecipe = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, 
         data: result,
     });
 }));
+const deleteUser = (0, catchAsynch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const result = yield admin_serrvice_1.AdminServices.deleteUserFromDb(id);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'User deleted Successfully',
+        data: result,
+    });
+}));
 exports.AdminControllers = {
     blockUser,
-    approvalAdmin,
     unBlockUser,
     publishRecipe,
     unPublishRecipe,
-    deleteRecipe
+    deleteRecipe,
+    getAllUser,
+    deleteUser,
+    getAllRecipe
 };

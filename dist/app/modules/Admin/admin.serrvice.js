@@ -17,6 +17,14 @@ const http_status_1 = __importDefault(require("http-status"));
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const auth_model_1 = require("../Auth/auth.model");
 const recipes_model_1 = require("../Recipes/recipes.model");
+const getAllUsrFromDb = () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield auth_model_1.User.find({ isDeleted: false });
+    return result;
+});
+const getAllRecipeFromDb = () => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield recipes_model_1.Recipe.find({ isDeleted: false });
+    return result;
+});
 const blockUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield auth_model_1.User.findById(id);
     if (!user) {
@@ -25,15 +33,7 @@ const blockUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield auth_model_1.User.findByIdAndUpdate(id, { isBlocked: true }, { new: true });
     return result;
 });
-const approvalAdmin = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield auth_model_1.User.findById(id);
-    if (!user) {
-        throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found');
-    }
-    const result = yield auth_model_1.User.findByIdAndUpdate(id, { role: 'admin' }, { new: true });
-    return result;
-});
-const unBlockUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
+const unBlockUsers = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield auth_model_1.User.findById(id);
     if (!user) {
         throw new AppError_1.default(http_status_1.default.NOT_FOUND, 'User not found');
@@ -43,6 +43,10 @@ const unBlockUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const deleteRecipesFromDb = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield recipes_model_1.Recipe.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
+    return result;
+});
+const deleteUserFromDb = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield auth_model_1.User.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
     return result;
 });
 const publishRecipe = (id) => __awaiter(void 0, void 0, void 0, function* () {
@@ -63,9 +67,11 @@ const unPublishRecipe = (id) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.AdminServices = {
     blockUser,
-    approvalAdmin,
-    unBlockUser,
+    unBlockUsers,
     publishRecipe,
     unPublishRecipe,
     deleteRecipesFromDb,
+    getAllUsrFromDb,
+    deleteUserFromDb,
+    getAllRecipeFromDb
 };
